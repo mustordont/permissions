@@ -1,0 +1,108 @@
+<!doctype html>
+<!--
+Copyright 2015 Google Inc. All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <meta name="description" content="Sample illustrating the use of the Permissions API.">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Permissions API Sample</title>
+
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-title" content="Permissions API Sample">
+
+    <link rel="stylesheet" href="main.css">
+  </head>
+
+  <body>
+    <h1>Permissions API Sample</h1>
+
+    <p>Available in <a href="https://www.chromestatus.com/feature/6376494003650560">Chrome 43+</a></p>
+
+    <p>The Permissions API allows a web application to be aware of the status of a given permission, to know whether it is granted, denied or if the user will be asked whether the permission should be granted.</p>
+
+    <!-- // [START code-block] -->
+    <h3>Permissions</h3>
+
+    <div><b>Camera:</b> <span id='camera'></span></div>
+    <div><b>persistent-storage:</b> <span id='persistent-storage'></span></div>
+
+    <fieldset>
+      <legend>Requests</legend>
+      <label for="take-photo">take photo</label>
+      <input id="take-photo" type="file" accept="image/*" capture>
+
+      <label for="choose-photo">take photo</label>
+      <input id="choose-photo" type="file" accept="image/*">
+    </fieldset>
+
+    <div class="output">
+      <pre id="log"></pre>
+    </div>
+
+    <script>
+    (function () {
+      function log() {
+        document.querySelector('#log').textContent += Array.prototype.join.call(arguments, '') + '\n';
+      }
+
+      function updatePermission(name, state) {
+        log('update permission for ' + name + ' with ' + state);
+        document.getElementById(name).textContent = state;
+      }
+
+      function init() {
+
+        var takePhoto = document.querySelector('#take-photo');
+        var choosePhoto = document.querySelector('#choose-photo');
+
+        // Check for camera API permissions
+        navigator.permissions.query({name:'camera'}).then(function(p) {
+          updatePermission('camera', p.state);
+
+          p.onchange = function() {
+            updatePermission('camera', this.state);
+          };
+        });
+
+        // Check for persistent-storage API permissions
+        navigator.permissions.query({name:'persistent-storage'}).then(function(p) {
+          updatePermission('persistent-storage', p.state);
+          p.onchange = function() {
+            updatePermission('persistent-storage', this.state);
+          };
+        });
+
+        takePhoto.addEventListener('onchange', (result) => {
+            log(result);
+        });
+
+        choosePhoto.addEventListener('onchange', (result) => {
+            log(result);
+        });
+      }
+
+      init();
+    })();
+    </script>
+    <!-- // [END code-block] -->
+    <!-- Built with love using Web Starter Kit -->
+  </body>
+</html>
